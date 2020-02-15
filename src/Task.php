@@ -214,4 +214,31 @@ class Task extends Model
         return $this->rest->post("todo_lists/$task_list_id/" .
                                                 "$this->action/reorder", $ids);
     }
+
+    /**
+     * Retrieve all tasks on a project
+     *
+     * @param int $project_id
+     * @param string $filter
+     *
+     * @return \TeamWorkPm\Response\Model
+     * @throws \TeamWorkPm\Exception
+     */
+    public function getByProject($project_id, $filter = 'all')
+    {
+        $project_id = (int) $project_id;
+        if ($project_id <= 0) {
+            throw new Exception('Invalid param task_list_id');
+        }
+        $params = [
+            'filter'=> $filter
+        ];
+        $filter = strtolower($filter);
+        $validate = ['all', 'pending', 'upcoming','late','today','finished'];
+        if (in_array($filter, $validate)) {
+            $params['filter'] = 'all';
+        }
+        
+        return $this->rest->get("projects/$project_id/tasks", $params);
+    }
 }
